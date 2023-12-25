@@ -11,7 +11,7 @@ def getRegionsFromCoordinates(cornerOne: list[int], cornerTwo: list[int]) -> lis
 
   for x in range(bottomLeftRegion[0], (topRightRegion[0] + 1) ):
     for z in range(bottomLeftRegion[1], (topRightRegion[1] + 1 )):
-      allRegions.append(f"r.{x},{z}.mca")
+      allRegions.append(f"r.{x}.{z}.mca")
   
   return allRegions
   
