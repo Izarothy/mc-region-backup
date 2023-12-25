@@ -16,9 +16,12 @@ ftp = FTP(host)
 ftp.login(login, password)                     
 ftp.cwd('world/DIM100/region')               
 
-def doBackup(cornerOneStr: str, cornerTwoStr: str):
+def doBackup(cornerOneStr: str, cornerTwoStr: str, folderName: str):
   cornerOne = cornerOneStr.strip().split(',')
   cornerTwo = cornerTwoStr.strip().split(',')
+
+  os.mkdir(folderName)
+  os.chdir(folderName)
 
   allRegions = getRegionsFromCoordinates([int(x) for x in cornerOne], [int(x) for x in cornerTwo])
   for region in allRegions:
@@ -39,7 +42,12 @@ entryTopRight = tk.Entry()
 labelTopRight.pack()
 entryTopRight.pack()
 
-button = tk.Button(text="Do backup", command=lambda: doBackup(entryBottomLeft.get(), entryTopRight.get()))
+labelFolderName = tk.Label(text="Folder to backup in")
+entryFolderName = tk.Entry()
+labelFolderName.pack()
+entryFolderName.pack()
+
+button = tk.Button(text="Do backup", command=lambda: doBackup(entryBottomLeft.get(), entryTopRight.get(), entryFolderName.get()))
 button.pack()
 window.mainloop()
 
