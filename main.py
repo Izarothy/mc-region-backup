@@ -21,7 +21,9 @@ def doBackup(cornerOneStr: str, cornerTwoStr: str):
   cornerTwo = cornerTwoStr.strip().split(',')
 
   allRegions = getRegionsFromCoordinates([int(x) for x in cornerOne], [int(x) for x in cornerTwo])
-  print(allRegions)
+  for region in allRegions:
+    with open(region, 'wb') as fp:
+      ftp.retrbinary(f"RETR {region}", fp.write)
 
 # gui
 window = tk.Tk()
