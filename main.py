@@ -2,8 +2,12 @@ from ftplib import FTP
 from dotenv import load_dotenv
 import os
 import tkinter as tk
-
+import zipfile
 from lib.getRegionsFromCoordinates import getRegionsFromCoordinates
+
+# backup folder
+if (not os.path.isdir('backups')):
+  os.mkdir('backups')
 
 # env vars 
 load_dotenv()
@@ -16,17 +20,22 @@ ftp = FTP(host)
 ftp.login(login, password)                     
 ftp.cwd('world/DIM100/region')               
 
-def doBackup(cornerOneStr: str, cornerTwoStr: str, folderName: str):
+def doBackup(cornerOneStr: str, cornerTwoStr: str, zipFileName: str):
   cornerOne = cornerOneStr.strip().split(',')
   cornerTwo = cornerTwoStr.strip().split(',')
 
-  os.mkdir(folderName)
-  os.chdir(folderName)
-
   allRegions = getRegionsFromCoordinates([int(x) for x in cornerOne], [int(x) for x in cornerTwo])
-  for region in allRegions:
-    with open(region, 'wb') as fp:
-      ftp.retrbinary(f"RETR {region}", fp.write)
+
+  os.chdir('backups')
+
+  with zipfile.ZipFile(f"{zipFileName}.zip", 'w') as zipFile:
+    for region in allRegions:
+      with open(region, 'wb') as fp:
+        ftp.retrbinary(f"RETR {region}", fp.write)
+        fp.close()
+        zipFile.write(region)
+        os.remove(region)
+
 
 # gui
 window = tk.Tk()
@@ -42,7 +51,7 @@ entryTopRight = tk.Entry()
 labelTopRight.pack()
 entryTopRight.pack()
 
-labelFolderName = tk.Label(text="Folder to backup in")
+labelFolderName = tk.Label(text="Name of the ZIP file")
 entryFolderName = tk.Entry()
 labelFolderName.pack()
 entryFolderName.pack()
