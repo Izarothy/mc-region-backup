@@ -1,8 +1,9 @@
 from ftplib import FTP
 from dotenv import load_dotenv
 import os
-
 import tkinter as tk
+
+from lib.getRegionsFromCoordinates import getRegionsFromCoordinates
 
 # env vars 
 load_dotenv()
@@ -13,9 +14,16 @@ password = os.getenv("FTP_PASSWORD")
 # ftp setup
 ftp = FTP(host)  
 ftp.login(login, password)                     
-ftp.cwd('world')               
-ftp.retrlines('LIST')           
+ftp.cwd('world/DIM100/region')               
 
+def doBackup(cornerOneStr: str, cornerTwoStr: str):
+  cornerOne = cornerOneStr.strip().split(',')
+  cornerTwo = cornerTwoStr.strip().split(',')
+
+  allRegions = getRegionsFromCoordinates([int(x) for x in cornerOne], [int(x) for x in cornerTwo])
+  print(allRegions)
+
+# gui
 window = tk.Tk()
 window.geometry('500x300')
 
@@ -29,8 +37,7 @@ entryTopRight = tk.Entry()
 labelTopRight.pack()
 entryTopRight.pack()
 
-
-button = tk.Button(text="Do backup", command=doBackup)
+button = tk.Button(text="Do backup", command=lambda: doBackup(entryBottomLeft.get(), entryTopRight.get()))
 button.pack()
 window.mainloop()
 
