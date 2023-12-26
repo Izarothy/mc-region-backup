@@ -4,6 +4,6 @@ Minecraft worlds get pretty big and backing up all of it across multiple version
 
 ## Env template:
 
-FTP_HOST =
-FTP_LOGIN =
-FTP_PASSWORD =
+FTP_HOST =</br>
+FTP_LOGIN =</br>
+FTP_PASSWORD =</br>
