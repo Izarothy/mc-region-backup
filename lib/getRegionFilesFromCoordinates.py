@@ -1,8 +1,8 @@
 from lib.roundRegionName import roundRegionName
 
 def getRegionFilesFromCoordinates(cornerOne: list[int], cornerTwo: list[int]) -> list[str]:
-  [lowestX, highestZ] = cornerOne
-  [highestX, lowestZ] = cornerTwo
+  [lowestX, lowestZ] = cornerOne
+  [highestX, highestZ] = cornerTwo
 
   bottomLeftRegion = [roundRegionName(lowestX), roundRegionName(lowestZ)]
   topRightRegion = [roundRegionName(highestX), roundRegionName(highestZ)]
