@@ -18,23 +18,28 @@ password = os.getenv("FTP_PASSWORD")
 # ftp setup
 ftp = FTP(host)  
 ftp.login(login, password)                     
-ftp.cwd('world/DIM100/region')               
+ftp.cwd('world/DIM100/region')        
 
-def doBackup(cornerOneStr: str, cornerTwoStr: str, zipFileName: str):
-  cornerOne = cornerOneStr.strip().split(',')
-  cornerTwo = cornerTwoStr.strip().split(',')
+def doBackup(cornerOneEntry: str, cornerTwoEntry: str, zipFileNameEntry: str, ):
+  cornerOne = cornerOneEntry.get().strip().split(',')
+  cornerTwo = cornerTwoEntry.get().strip().split(',')
 
   allRegions = getRegionsFromCoordinates([int(x) for x in cornerOne], [int(x) for x in cornerTwo])
 
-  os.chdir('backups')
+  if (os.getcwd().find('backups') == -1):
+    os.chdir('backups')
 
-  with zipfile.ZipFile(f"{zipFileName}.zip", 'w') as zipFile:
+  with zipfile.ZipFile(f"{zipFileNameEntry.get()}.zip", 'w') as zipFile:
     for region in allRegions:
       with open(region, 'wb') as fp:
         ftp.retrbinary(f"RETR {region}", fp.write)
         fp.close()
         zipFile.write(region)
         os.remove(region)
+  
+  cornerOneEntry.delete(0, 'end')
+  cornerTwoEntry.delete(0, 'end')
+  zipFileNameEntry.delete(0, 'end')
 
 
 # gui
@@ -51,12 +56,12 @@ entryTopRight = tk.Entry()
 labelTopRight.pack()
 entryTopRight.pack()
 
-labelFolderName = tk.Label(text="Name of the ZIP file")
-entryFolderName = tk.Entry()
-labelFolderName.pack()
-entryFolderName.pack()
+labelZipfileName = tk.Label(text="Name of the ZIP file")
+entryZipfileName = tk.Entry()
+labelZipfileName.pack()
+entryZipfileName.pack()
 
-button = tk.Button(text="Do backup", command=lambda: doBackup(entryBottomLeft.get(), entryTopRight.get(), entryFolderName.get()))
+button = tk.Button(text="Do backup", command=lambda: doBackup(entryBottomLeft, entryTopRight, entryZipfileName))
 button.pack()
 window.mainloop()
 
