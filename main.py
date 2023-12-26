@@ -2,7 +2,10 @@ from ftplib import FTP
 from dotenv import load_dotenv
 import os
 import zipfile
-from lib.getRegionsFromCoordinates import getRegionsFromCoordinates
+from datetime import datetime
+
+from lib.getRegionFilesFromCoordinates import getRegionFilesFromCoordinates
+from lib.getRegionsFromYaml import getRegionsFromYaml
 
 # backup folder
 if (not os.path.isdir('backups')):
@@ -17,20 +20,29 @@ password = os.getenv("FTP_PASSWORD")
 # ftp setup
 ftp = FTP(host)  
 ftp.login(login, password)                     
+ftp.cwd('world/DIM100/region')        
 
-def doBackup(cornerOne: list[int], cornerTwo: list[int], zipFileName: str, ):
-  ftp.cwd('world/DIM100/region')        
-  allRegions = getRegionsFromCoordinates(cornerOne, cornerTwo)
+# date
+currentDate = datetime.now()
+currentDateStr = currentDate.strftime("%d-%m-%y")
 
-  if (os.getcwd().find('backups') == -1):
-    os.chdir('backups')
+def doBackup(regionName: str, cornerOne: list[int], cornerTwo: list[int], zipFileName: str ):
+  allRegionFiles = getRegionFilesFromCoordinates(cornerOne, cornerTwo)
 
-  with zipfile.ZipFile(f"{zipFileName.get()}.zip", 'w') as zipFile:
-    for region in allRegions:
-      with open(region, 'wb') as fp:
-        ftp.retrbinary(f"RETR {region}", fp.write)
+  with zipfile.ZipFile(zipFileName, 'a') as zipFile:
+    for regionFile in allRegionFiles:
+      with open(regionFile, 'wb') as fp:
+        ftp.retrbinary(f"RETR {regionFile}", fp.write)
+        zipFile.write(regionFile, f"{regionName}/{regionFile}")
         fp.close()
-        zipFile.write(region)
-        os.remove(region)
-  
+        os.remove(regionFile)
+
+allRegions = getRegionsFromYaml('regions.yml')
+os.chdir("backups")
+
+zipFileName = f"{currentDateStr}.zip"
+zipfile.ZipFile(zipFileName, 'w')
+
+for region in allRegions:
+  doBackup(region['name'], region['min'], region['max'], zipFileName)
 ftp.quit()

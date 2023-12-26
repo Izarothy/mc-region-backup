@@ -1,16 +1,16 @@
 from lib.roundRegionName import roundRegionName
 
-def getRegionsFromCoordinates(cornerOne: list[int], cornerTwo: list[int]) -> list[str]:
+def getRegionFilesFromCoordinates(cornerOne: list[int], cornerTwo: list[int]) -> list[str]:
   [lowestX, highestZ] = cornerOne
   [highestX, lowestZ] = cornerTwo
 
   bottomLeftRegion = [roundRegionName(lowestX), roundRegionName(lowestZ)]
   topRightRegion = [roundRegionName(highestX), roundRegionName(highestZ)]
 
-  allRegions = []
+  allRegionFiles = []
   for x in range(bottomLeftRegion[0], (topRightRegion[0] + 1) ):
     for z in range(bottomLeftRegion[1], (topRightRegion[1] + 1 )):
-      allRegions.append(f"r.{x}.{z}.mca")
+      allRegionFiles.append(f"r.{x}.{z}.mca")
   
-  return allRegions
+  return allRegionFiles
   
