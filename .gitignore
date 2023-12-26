@@ -1,3 +1,4 @@
 .env
 lib/__pycache__
 backups
+regions.yml

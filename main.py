@@ -37,7 +37,11 @@ def doBackup(regionName: str, cornerOne: list[int], cornerTwo: list[int], zipFil
         fp.close()
         os.remove(regionFile)
 
+with open ('regions.yml', 'wb') as localYamlFile:
+  ftp.retrbinary("RETR /plugins/WorldGuard/worlds/DIM100/regions.yml", localYamlFile.write)
+yamlFile = ftp.retrbinary("RETR plugins/WorldGuard/worlds/DIM100/regions.yml")
 allRegions = getRegionsFromYaml('regions.yml')
+
 os.chdir("backups")
 
 zipFileName = f"{currentDateStr}.zip"
