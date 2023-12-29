@@ -1,5 +1,8 @@
-from math import floor
-def roundRegionName(number: int):
-  if (number < 0):
-    return floor(number / 512)
-  return floor(number / 512)
+from math import floor, ceil
+
+def roundRegionName(coordinate: int) -> int:
+  if (coordinate < 0):
+    if (coordinate >= -512):
+      return ceil(coordinate / 512) 
+  
+  return floor(coordinate / 512)
